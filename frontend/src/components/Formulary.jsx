@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export function Formulary({ setGames }) {
+export function Formulary({ setGameList }) {
   const [game, setGame] = useState({
     id: "",
     name: "",
@@ -15,7 +15,7 @@ export function Formulary({ setGames }) {
 
     //Valida entrada
     if (!game.name || !game.genre || !game.year) {
-      alert("Preencha todos os campos");
+      alert("Complete all fields");
       return;
     }
 
@@ -25,10 +25,10 @@ export function Formulary({ setGames }) {
       id: uuidv4(),
     };
 
-    setGames((prevGames) => [...prevGames, newGame]);
+    setGameList((prevGames) => [...prevGames, newGame]);
 
     //Log para verificar
-    console.log("Enviando o objeto completo:", newGame);
+    console.log("Sending the complete object:", newGame);
 
     // Limpa campos após o envio
     setGame({
@@ -48,7 +48,7 @@ export function Formulary({ setGames }) {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="name">Nome do Jogo </label>
+        <label htmlFor="name">Title </label>
         <input
           type="text"
           name="name"
@@ -59,7 +59,7 @@ export function Formulary({ setGames }) {
       </div>
 
       <div>
-        <label htmlFor="genre">Gênero </label>
+        <label htmlFor="genre">Genre </label>
         <input
           type="text"
           name="genre"
@@ -69,7 +69,7 @@ export function Formulary({ setGames }) {
         />
       </div>
       <div>
-        <label htmlFor="year">Ano </label>
+        <label htmlFor="year">Year </label>
         <input
           type="number"
           name="year"

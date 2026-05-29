@@ -1,4 +1,4 @@
-export function GameCard({game}) {
+export function GameCard({game, onDelete}) {
 
 
   return (
@@ -7,8 +7,7 @@ export function GameCard({game}) {
         <p>
           {game.genre} • {game.year}
         </p>
-        <button>Alterar</button>
-        <button>Excluir</button>
+        <button onClick={() => onDelete(game.id)}>Delete</button>
     </div>
   )
 }
