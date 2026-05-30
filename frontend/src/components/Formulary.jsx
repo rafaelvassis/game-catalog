@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export function Formulary({ setGameList }) {
+export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) {
+  //Estado para o objeto que vai ser criado no formulário
   const [game, setGame] = useState({
     id: "",
     name: "",
     genre: "",
     year: "",
   });
+
+  useEffect(() => {
+    if (gameBeingEdited) {
+      setGame(gameBeingEdited);
+    }
+  }, [gameBeingEdited]);
 
   const handleSubmit = (event) => {
     //Previne comportamento padrão
@@ -19,24 +26,32 @@ export function Formulary({ setGameList }) {
       return;
     }
 
-    //Gera novo game
-    const newGame = {
-      ...game,
-      id: uuidv4(),
-    };
+    if (gameBeingEdited) {
+      setGameList((prevGames) =>
+        prevGames.map((currentGame) =>
+          currentGame.id === gameBeingEdited.id ? game : currentGame,
+        ),
+      );
+    } else {
+      //Gera novo game
+      const newGame = {
+        ...game,
+        id: uuidv4(),
+      };
 
-    setGameList((prevGames) => [...prevGames, newGame]);
+      // Adiciona novo game à lista
+      setGameList((prevGames) => [...prevGames, newGame]);
+    }
 
-    //Log para verificar
-    console.log("Sending the complete object:", newGame);
-
-    // Limpa campos após o envio
+    // Reseta campos após o envio
     setGame({
       id: "",
       name: "",
       genre: "",
       year: "",
     });
+
+    setGameBeingEdited(null);
   };
 
   const handleChange = (event) => {
@@ -78,7 +93,9 @@ export function Formulary({ setGameList }) {
           onChange={handleChange}
         />
       </div>
-      <button type="submit">Adicionar</button>
+      <button type="submit">
+        {gameBeingEdited ? "Update Game" : "Add Game"}
+      </button>
     </form>
   );
 }
