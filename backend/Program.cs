@@ -17,36 +17,39 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+var games = new List<Game>();
+
+foreach (Game g in games)
+{
+    System.Console.WriteLine(g);
+}
+
 app.MapGet("/games", () =>
 {
-    return new List<Game>
-    {
-        new()
-        {
-            Id = 1,
-            Name = "The Witcher 3",
-            Genre = "RPG",
-            Year = 2015
-        },
-        new()
-        {
-            Id = 2,
-            Name = "Elden Ring",
-            Genre = "Soulslike",
-            Year = 2022
-        }
-    };
+    return games;
 });
 
 
-/* app.MapPost("/games", ([FromBody] Game game) =>
-{
-    return game;
-}); */
-
 app.MapPost("/games", (Game game) =>
 {
+    games.Add(game);
+
     return game;
+});
+
+
+app.MapDelete("/games/{id}", (int id) =>
+{
+
+    for (int i = 0; i < games.Count; i++)
+    {
+        if (games[i].Id == id)
+        {
+            return games.Remove(games[i]);
+        }
+    }
+
+    return false;
 });
 
 app.Run();

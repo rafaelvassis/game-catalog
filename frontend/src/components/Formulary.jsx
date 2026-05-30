@@ -12,6 +12,7 @@ export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) 
 
   useEffect(() => {
     if (gameBeingEdited) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGame(gameBeingEdited);
     }
   }, [gameBeingEdited]);
