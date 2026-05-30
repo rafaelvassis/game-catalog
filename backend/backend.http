@@ -1,0 +1,11 @@
+@backend_HostAddress = http://localhost:5224
+
+POST {{backend_HostAddress}}/games
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "The Witcher 3",
+  "genre": "RPG",
+  "year": 2015
+}
