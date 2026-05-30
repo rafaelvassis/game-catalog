@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formulary } from "./components/Formulary";
 import { GameCard } from "./components/GameCard";
 
@@ -6,14 +6,32 @@ function App() {
   const [gameList, setGameList] = useState([]);
   const [gameBeingEdited, setGameBeingEdited] = useState(null);
 
+  // Fetch games from backend API
+  const fetchGames = async () => {
+    const response = await fetch("http://localhost:5224/games");
+
+    const games = await response.json();
+
+    console.log(games);
+
+    setGameList(games);
+  };
+
+  // Render games list
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchGames();
+  }, []);
+
+
+  // Fromtend handles
   const handleDelete = (idToDelete) => {
     setGameList((prevGames) =>
       prevGames.filter((game) => game.id !== idToDelete),
     );
   };
 
-  console.log("Jogo sendo editado", gameBeingEdited);
-
+  
   return (
     <>
       <h1>Game Catalog</h1>
@@ -29,7 +47,12 @@ function App() {
         ))}
       </div>
       <br />
-      <Formulary setGameList={setGameList} gameBeingEdited={gameBeingEdited} setGameBeingEdited={setGameBeingEdited} gameList={gameList} />
+      <Formulary
+        setGameList={setGameList}
+        gameBeingEdited={gameBeingEdited}
+        setGameBeingEdited={setGameBeingEdited}
+        gameList={gameList}
+      />
     </>
   );
 }

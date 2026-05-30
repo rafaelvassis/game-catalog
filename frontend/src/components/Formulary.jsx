@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) {
-  //Estado para o objeto que vai ser criado no formulário
+  
   const [game, setGame] = useState({
     id: "",
     name: "",
@@ -18,10 +18,10 @@ export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) 
   }, [gameBeingEdited]);
 
   const handleSubmit = (event) => {
-    //Previne comportamento padrão
+
     event.preventDefault();
 
-    //Valida entrada
+    // Validate inputs
     if (!game.name || !game.genre || !game.year) {
       alert("Complete all fields");
       return;
@@ -34,17 +34,17 @@ export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) 
         ),
       );
     } else {
-      //Gera novo game
+      
       const newGame = {
         ...game,
         id: uuidv4(),
       };
 
-      // Adiciona novo game à lista
+      // Add new game to the list
       setGameList((prevGames) => [...prevGames, newGame]);
     }
 
-    // Reseta campos após o envio
+    // Reset form inputs
     setGame({
       id: "",
       name: "",
