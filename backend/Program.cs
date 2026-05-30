@@ -1,5 +1,4 @@
 using backend.Models;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,37 +18,54 @@ app.UseHttpsRedirection();
 
 var games = new List<Game>();
 
-foreach (Game g in games)
-{
-    System.Console.WriteLine(g);
-}
-
+// Endpoint Get
 app.MapGet("/games", () =>
 {
-    return games;
+    return Results.Ok(games);
 });
 
 
+// EndPoint Post
 app.MapPost("/games", (Game game) =>
 {
     games.Add(game);
 
-    return game;
+    return Results.Created($"/games/{game.Id}", game);
 });
 
 
+// EndPoint Delete
 app.MapDelete("/games/{id}", (int id) =>
 {
+    var game = games.Find(g => g.Id == id);
 
+    if (game is null)
+    {
+        return Results.NotFound();
+    }
+
+    games.Remove(game);
+
+    return Results.Ok(game);
+});
+
+
+// EndPoint PUT
+app.MapPut("/games/{id}", (int id, Game gameUpdated) =>
+{
     for (int i = 0; i < games.Count; i++)
     {
         if (games[i].Id == id)
         {
-            return games.Remove(games[i]);
+            gameUpdated.Id = id;
+            games[i] = gameUpdated;
+
+            return Results.Ok(gameUpdated);
         }
     }
 
-    return false;
+    return Results.NotFound();
 });
+
 
 app.Run();
