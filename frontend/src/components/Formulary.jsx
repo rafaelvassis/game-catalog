@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   const [game, setGame] = useState({
-    id: "",
     name: "",
     genre: "",
     year: "",
@@ -11,7 +10,11 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   useEffect(() => {
     if (gameBeingEdited) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setGame(gameBeingEdited);
+      setGame({
+        name: gameBeingEdited.name,
+        genre: gameBeingEdited.genre,
+        year: gameBeingEdited.year,
+      });
     }
   }, [gameBeingEdited]);
 
@@ -29,22 +32,12 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
   function resetForm() {
     setGame({
-      id: "",
       name: "",
       genre: "",
       year: "",
     });
 
     setGameBeingEdited(null);
-  }
-
-  function gameSetted() {
-    const newGame = {
-      ...game,
-      id: Date.now(),
-    };
-
-    return newGame;
   }
 
   // API functions  ↓  ↓  ↓  ↓  ↓
@@ -67,7 +60,6 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
       const result = await response.json();
       console.log("Update successful: ", result);
-
     } catch (error) {
       console.error("Creation error : ", error);
       throw error;
@@ -105,16 +97,13 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
 
     if (!inputValidation(game)) return;
 
-    const newGame = gameSetted();
-
     if (gameBeingEdited) {
-      await updateGame(gameBeingEdited.id, newGame);
-      await fetchGames();
+      await updateGame(gameBeingEdited.id, game);
     } else {
-      await createGame(newGame);
-      await fetchGames();
+      await createGame(game);
     }
 
+    await fetchGames();
     resetForm();
   };
 

@@ -30,17 +30,24 @@ app.UseHttpsRedirection();
 
 var games = new List<Game>();
 
+long nextId = games.Count == 0
+    ? 1
+    : games.Max(g => g.Id) + 1;
+
 // Endpoint Get
 app.MapGet("/games", () =>
 {
     return Results.Ok(games);
 });
 
-
 // EndPoint Post
-app.MapPost("/games", (Game game) =>
+app.MapPost("/games", (CreateGameRequest request) =>
 {
+    Game game = new Game(nextId, request.Name, request.Genre, request.Year);
+
     games.Add(game);
+
+    nextId++;
 
     return Results.Created($"/games/{game.Id}", game);
 });
@@ -63,20 +70,22 @@ app.MapDelete("/games/{id}", (long id) =>
 
 
 // EndPoint PUT
-app.MapPut("/games/{id}", (long id, Game gameUpdated) =>
+app.MapPut("/games/{id}", (long id, UpdateGameRequest request) =>
 {
-    for (int i = 0; i < games.Count; i++)
-    {
-        if (games[i].Id == id)
-        {
-            gameUpdated.Id = id;
-            games[i] = gameUpdated;
+    Game? game = games.Find(g => g.Id == id);
 
-            return Results.Ok(gameUpdated);
-        }
+    if (game is not null)
+    {
+        game.Name = request.Name;
+        game.Genre = request.Genre;
+        game.Year = request.Year;
+        
+        return Results.Ok(game);
     }
 
     return Results.NotFound();
+
+
 });
 
 
