@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function Formulary({
-  setGameList,
-  gameBeingEdited,
-  setGameBeingEdited,
-  fetchGames,
-}) {
+export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   const [game, setGame] = useState({
     id: "",
     name: "",
@@ -20,10 +15,66 @@ export function Formulary({
     }
   }, [gameBeingEdited]);
 
+  // Utils ↓  ↓  ↓  ↓  ↓
 
+  function inputValidation(game) {
+    if (!game.name || !game.genre || !game.year) {
+      alert("Complete all fields");
+
+      return false;
+    }
+
+    return true;
+  }
+
+  function resetForm() {
+    setGame({
+      id: "",
+      name: "",
+      genre: "",
+      year: "",
+    });
+
+    setGameBeingEdited(null);
+  }
+
+  function gameSetted() {
+    const newGame = {
+      ...game,
+      id: Date.now(),
+    };
+
+    return newGame;
+  }
+
+  // API functions  ↓  ↓  ↓  ↓  ↓
+
+  async function updateGame(idToUpdate, gameUpdated) {
+    const url = `http://localhost:5224/games/${idToUpdate}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gameUpdated),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request error: ${response.status} `);
+      }
+
+      const result = await response.json();
+      console.log("Update successful: ", result);
+
+    } catch (error) {
+      console.error("Creation error : ", error);
+      throw error;
+    }
+  }
 
   async function createGame(newGame) {
-
     const url = "http://localhost:5224/games";
 
     try {
@@ -41,53 +92,30 @@ export function Formulary({
 
       const result = await response.json();
       console.log("Creation successful: ", result);
-
     } catch (error) {
       console.error("Creation error : ", error);
       throw error;
     }
   }
 
-  const handleSubmit = async (event) => {
+  // Handles  ↓  ↓  ↓  ↓  ↓
 
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Input validations
-    if (!game.name || !game.genre || !game.year) {
-      alert("Complete all fields");
-      return;
-    }
+    if (!inputValidation(game)) return;
 
-    // Setting new game
-    const newGame = {
-      ...game,
-      id: Date.now(),
-    };
-
-    console.log("new game: ", newGame);
-
+    const newGame = gameSetted();
 
     if (gameBeingEdited) {
-      setGameList((prevGames) =>
-        prevGames.map((currentGame) =>
-          currentGame.id === gameBeingEdited.id ? game : currentGame,
-        ),
-      );
-
+      await updateGame(gameBeingEdited.id, newGame);
+      await fetchGames();
     } else {
       await createGame(newGame);
       await fetchGames();
     }
 
-    // Reset form inputs
-    setGame({
-      id: "",
-      name: "",
-      genre: "",
-      year: "",
-    });
-
-    setGameBeingEdited(null);
+    resetForm();
   };
 
   const handleChange = (event) => {
