@@ -23,14 +23,30 @@ function App() {
     fetchGames();
   }, []);
 
+  async function deleteGame(idToDelete) {
+    const url = `http://localhost:5224/games/${idToDelete}`;
 
-  // Frontend handles
-  const handleDelete = (idToDelete) => {
-    setGameList((prevGames) =>
-      prevGames.filter((game) => game.id !== idToDelete),
-    );
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request error: ${response.status} `);
+      }
+
+      const result = await response.json();
+      console.log("Deletion successful: ", result);
+    } catch (error) {
+      console.error("Deletion failure: ", error);
+      throw error;
+    }
+  }
+
+  const handleDelete = async (idToDelete) => {
+    await deleteGame(idToDelete);
+    await fetchGames();
   };
-
 
   return (
     <>

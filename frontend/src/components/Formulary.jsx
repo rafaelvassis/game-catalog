@@ -20,7 +20,10 @@ export function Formulary({
     }
   }, [gameBeingEdited]);
 
+
+
   async function createGame(newGame) {
+
     const url = "http://localhost:5224/games";
 
     try {
@@ -37,21 +40,25 @@ export function Formulary({
       }
 
       const result = await response.json();
-      console.log("Success: ", result);
+      console.log("Creation successful: ", result);
+
     } catch (error) {
-      console.error("Create error: ", error);
+      console.error("Creation error : ", error);
+      throw error;
     }
   }
 
   const handleSubmit = async (event) => {
+
     event.preventDefault();
 
-    // Validate inputs
+    // Input validations
     if (!game.name || !game.genre || !game.year) {
       alert("Complete all fields");
       return;
     }
 
+    // Setting new game
     const newGame = {
       ...game,
       id: Date.now(),
@@ -59,12 +66,14 @@ export function Formulary({
 
     console.log("new game: ", newGame);
 
+
     if (gameBeingEdited) {
       setGameList((prevGames) =>
         prevGames.map((currentGame) =>
           currentGame.id === gameBeingEdited.id ? game : currentGame,
         ),
       );
+
     } else {
       await createGame(newGame);
       await fetchGames();

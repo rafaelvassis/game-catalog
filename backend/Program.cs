@@ -47,7 +47,7 @@ app.MapPost("/games", (Game game) =>
 
 
 // EndPoint Delete
-app.MapDelete("/games/{id}", (int id) =>
+app.MapDelete("/games/{id}", (long id) =>
 {
     var game = games.Find(g => g.Id == id);
 
@@ -63,7 +63,7 @@ app.MapDelete("/games/{id}", (int id) =>
 
 
 // EndPoint PUT
-app.MapPut("/games/{id}", (int id, Game gameUpdated) =>
+app.MapPut("/games/{id}", (long id, Game gameUpdated) =>
 {
     for (int i = 0; i < games.Count; i++)
     {
