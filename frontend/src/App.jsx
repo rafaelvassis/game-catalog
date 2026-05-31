@@ -1,48 +1,26 @@
 import { useEffect, useState } from "react";
 import { Formulary } from "./components/Formulary";
 import { GameCard } from "./components/GameCard";
+import { getGames, deleteGame } from "./services/gameService";
 
 function App() {
   const [gameList, setGameList] = useState([]);
   const [gameBeingEdited, setGameBeingEdited] = useState(null);
-  
+
   // Fetch games from backend API
   const fetchGames = async () => {
-    const response = await fetch("http://localhost:5224/games");
-    
-    const games = await response.json();
-    
-    console.log(games);
-    
+    const games = await getGames();
+
     setGameList(games);
   };
-  
+
   // Render games list
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchGames();
   }, []);
 
-  async function deleteGame(idToDelete) {
-    const url = `http://localhost:5224/games/${idToDelete}`;
-
-    try {
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Request error: ${response.status} `);
-      }
-
-      const result = await response.json();
-      console.log("Deletion successful: ", result);
-    } catch (error) {
-      console.error("Deletion failure: ", error);
-      throw error;
-    }
-  }
-
+  
   const handleDelete = async (idToDelete) => {
     await deleteGame(idToDelete);
     await fetchGames();
@@ -66,7 +44,6 @@ function App() {
       <Formulary
         gameBeingEdited={gameBeingEdited}
         setGameBeingEdited={setGameBeingEdited}
-        gameList={gameList}
         fetchGames={fetchGames}
       />
     </>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createGame, updateGame } from "../services/gameService";
 
 export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
   const [game, setGame] = useState({
@@ -40,56 +41,7 @@ export function Formulary({ gameBeingEdited, setGameBeingEdited, fetchGames }) {
     setGameBeingEdited(null);
   }
 
-  // API functions  ↓  ↓  ↓  ↓  ↓
-
-  async function updateGame(idToUpdate, gameUpdated) {
-    const url = `http://localhost:5224/games/${idToUpdate}`;
-
-    try {
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(gameUpdated),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Request error: ${response.status} `);
-      }
-
-      const result = await response.json();
-      console.log("Update successful: ", result);
-    } catch (error) {
-      console.error("Creation error : ", error);
-      throw error;
-    }
-  }
-
-  async function createGame(newGame) {
-    const url = "http://localhost:5224/games";
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newGame),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Request error: ${response.status} `);
-      }
-
-      const result = await response.json();
-      console.log("Creation successful: ", result);
-    } catch (error) {
-      console.error("Creation error : ", error);
-      throw error;
-    }
-  }
-
+  
   // Handles  ↓  ↓  ↓  ↓  ↓
 
   const handleSubmit = async (event) => {
