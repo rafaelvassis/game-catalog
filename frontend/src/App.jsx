@@ -24,14 +24,14 @@ function App() {
   }, []);
 
 
-  // Fromtend handles
+  // Frontend handles
   const handleDelete = (idToDelete) => {
     setGameList((prevGames) =>
       prevGames.filter((game) => game.id !== idToDelete),
     );
   };
 
-  
+
   return (
     <>
       <h1>Game Catalog</h1>
@@ -52,6 +52,7 @@ function App() {
         gameBeingEdited={gameBeingEdited}
         setGameBeingEdited={setGameBeingEdited}
         gameList={gameList}
+        fetchGames={fetchGames}
       />
     </>
   );

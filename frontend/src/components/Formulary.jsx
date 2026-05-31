@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
-export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) {
-  
+export function Formulary({
+  setGameList,
+  gameBeingEdited,
+  setGameBeingEdited,
+  fetchGames,
+}) {
   const [game, setGame] = useState({
     id: "",
     name: "",
@@ -17,8 +20,30 @@ export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) 
     }
   }, [gameBeingEdited]);
 
-  const handleSubmit = (event) => {
+  async function createGame(newGame) {
+    const url = "http://localhost:5224/games";
 
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newGame),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request error: ${response.status} `);
+      }
+
+      const result = await response.json();
+      console.log("Success: ", result);
+    } catch (error) {
+      console.error("Create error: ", error);
+    }
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Validate inputs
@@ -27,6 +52,13 @@ export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) 
       return;
     }
 
+    const newGame = {
+      ...game,
+      id: Date.now(),
+    };
+
+    console.log("new game: ", newGame);
+
     if (gameBeingEdited) {
       setGameList((prevGames) =>
         prevGames.map((currentGame) =>
@@ -34,14 +66,8 @@ export function Formulary({ setGameList, gameBeingEdited, setGameBeingEdited }) 
         ),
       );
     } else {
-      
-      const newGame = {
-        ...game,
-        id: uuidv4(),
-      };
-
-      // Add new game to the list
-      setGameList((prevGames) => [...prevGames, newGame]);
+      await createGame(newGame);
+      await fetchGames();
     }
 
     // Reset form inputs
